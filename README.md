@@ -42,6 +42,7 @@ Presentation for Build 2019
     - `> exit`
 - Install powershell
     - `$ pengwin-setup` -> Tools -> Powershell
+    - `$ pwsh`
 - Install and run X410
     - [Store Link](https://www.microsoft.com/en-us/p/x410/9nlp712zmn9q)
 - Install Geany
