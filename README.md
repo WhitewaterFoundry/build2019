@@ -3,11 +3,12 @@ Presentation for Build 2019
 
 ## code
 
-demo.py - Sample Python3 script
-deploy_container.yml - Sample Ansible Playbook that deploys our docker container to Azure
-install_fedorawsl.yml - Sample Ansible Playbook that installs Fedora Remix for WSL on Windows
+- [helloworld.c]
+- [demo.py](https://github.com/WhitewaterFoundry/build2019/blob/master/demo.py) - Sample Python3 script
+- [deploy_container.yml](https://github.com/WhitewaterFoundry/build2019/blob/master/deploy_container.yml) - Sample Ansible Playbook that deploys our docker container to Azure
+- [install_fedorawsl.yml](https://github.com/WhitewaterFoundry/build2019/blob/master/install_fedorawsl.yml) - Sample Ansible Playbook that installs Fedora Remix for WSL on Windows
 
-## demos 
+## dev demos 
 
 ### Getting acquainted with WSL
 
@@ -22,20 +23,38 @@ install_fedorawsl.yml - Sample Ansible Playbook that installs Fedora Remix for W
     - `$ sudo apt-get install ssh`
 - Install build-essential
     - `$ sudo apt-get install build-essential`
-- Install vim
-    - `$ sudo apt-get install vim`
+- Install nano
+    - `$ sudo apt-get install nano`
+- Run nano
+    - `$ nano helloworld.c`
+- Copy and paste helloworld.c into nano and save
+- Build helloworld.c for Linux
+    - `$ gcc helloworld.c -o helloworld`
+- Run helloworld for Linux
+    - `$ ./helloworld`
+- Build helloworld.c for Windows
+    - `$ x86_64-w64-mingw32-gcc helloworld.c -o helloworld.exe`
+- Run helloworld for Windows
+    - `$ cp helloworld.exe /mnt/c/Users/Pengwin/Desktop/`
+    - `$ cmd.exe`
+    - `> cd c:\Users\Pengwin\Desktop\`
+    - `> helloworld.exe`
+    - `> exit`
 - Install powershell
     - `$ pengwin-setup`
 - Install X410
     - [Store Link](https://www.microsoft.com/en-us/p/x410/9nlp712zmn9q)
 - Install Geany
     - `$ sudo apt-get install geany`
+    - `$ geany helloworld.c`
 
 ### Build our development environment
 
 ### Script with Code
 
 ### Debug running Linux code using Visual Studio
+
+## ops demos 
 
 ### Containerizing our app
 
