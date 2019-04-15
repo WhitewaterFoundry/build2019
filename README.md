@@ -9,9 +9,7 @@ install_fedorawsl.yml - Sample Ansible Playbook that installs Fedora Remix for W
 
 ## demos 
 
-### dev
-
-#### Getting acquainted with WSL
+### Getting acquainted with WSL
 
 - Enabling WSL
     - Manually
@@ -33,18 +31,16 @@ install_fedorawsl.yml - Sample Ansible Playbook that installs Fedora Remix for W
 - Install Geany
     - `$ sudo apt-get install geany`
 
-#### Build our development environment
+### Build our development environment
 
-#### Script with Code
+### Script with Code
 
-#### Debug running Linux code using Visual Studio
+### Debug running Linux code using Visual Studio
 
-### ops
+### Containerizing our app
 
-#### Containerizing our app
+### Deploy container to cloud​
 
-#### Deploy container to cloud​
+### Deploy container to on-site Linux server​
 
-#### Deploy container to on-site Linux server​
-
-#### Configuring remote devices​
+### Configuring remote devices​
