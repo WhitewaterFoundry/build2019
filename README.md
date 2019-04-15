@@ -13,6 +13,26 @@ install_fedorawsl.yml - Sample Ansible Playbook that installs Fedora Remix for W
 
 #### Getting acquainted with WSL
 
+- Enabling WSL
+    - Manually
+        - Start -> Settings -> Apps & Features -> Programs and Features -> Turn Windows features on or off -> Windows Subsystem for Linux -> OK
+    - PowerShell (as Administrator)
+        - `PS Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux`
+- Install Pengwin from Microsoft Store
+    - [Store Link](https://www.microsoft.com/en-us/p/pengwin/9nv1gv1pxz6p)
+- Install ssh
+    - `$ sudo apt-get install ssh`
+- Install build-essential
+    - `$ sudo apt-get install build-essential`
+- Install vim
+    - `$ sudo apt-get install vim`
+- Install powershell
+    - `$ pengwin-setup`
+- Install X410
+    - [Store Link](https://www.microsoft.com/en-us/p/x410/9nlp712zmn9q)
+- Install Geany
+    - `$ sudo apt-get install geany`
+
 #### Build our development environment
 
 #### Script with Code
