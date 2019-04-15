@@ -20,11 +20,11 @@ Presentation for Build 2019
 - Install and run Pengwin from Microsoft Store
     - [Store Link](https://www.microsoft.com/en-us/p/pengwin/9nv1gv1pxz6p)
 - Install ssh
-    - `$ sudo apt-get install ssh`
-- Install build-essential
-    - `$ sudo apt-get install build-essential`
+    - `$ sudo apt-get install ssh -y`
+- Install basic build tools
+    - `$ sudo apt-get install build-essential gcc-mingw-w64 -y`
 - Install nano
-    - `$ sudo apt-get install nano`
+    - `$ sudo apt-get install nano -y`
 - Run nano
     - `$ nano helloworld.c`
 - Copy and paste helloworld.c into nano and save
@@ -40,8 +40,8 @@ Presentation for Build 2019
     - `> cd c:\Users\Pengwin\Desktop\`
     - `> helloworld.exe`
     - `> exit`
-- Install powershell
-    - `$ pengwin-setup` -> Tools -> Powershell
+- Install PowerShell
+    - `$ pengwin-setup` -> Tools -> PowerShell
     - `$ pwsh`
 - Install and run X410
     - [Store Link](https://www.microsoft.com/en-us/p/x410/9nlp712zmn9q)
