@@ -17,7 +17,7 @@ Presentation for Build 2019
         - Start -> Settings -> Apps & Features -> Programs and Features -> Turn Windows features on or off -> Windows Subsystem for Linux -> OK
     - PowerShell (as Administrator)
         - `PS Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux`
-- Install Pengwin from Microsoft Store
+- Install and run Pengwin from Microsoft Store
     - [Store Link](https://www.microsoft.com/en-us/p/pengwin/9nv1gv1pxz6p)
 - Install ssh
     - `$ sudo apt-get install ssh`
@@ -41,8 +41,8 @@ Presentation for Build 2019
     - `> helloworld.exe`
     - `> exit`
 - Install powershell
-    - `$ pengwin-setup`
-- Install X410
+    - `$ pengwin-setup` -> Tools -> Powershell
+- Install and run X410
     - [Store Link](https://www.microsoft.com/en-us/p/x410/9nlp712zmn9q)
 - Install Geany
     - `$ sudo apt-get install geany`
