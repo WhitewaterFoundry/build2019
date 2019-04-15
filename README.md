@@ -51,9 +51,44 @@ Presentation for Build 2019
 
 ### Build our development environment
 
+- Install Python
+    - `$ pengwin-setup` -> Programming -> Python
+- Open Code
+- Configure Code
+    - Ctrl + ,
+    - Find `terminal.integrated.shell.windows`
+    - Paste `pengwin.exe`
+- Open Terminal in Code
+
 ### Script with Code
 
+- Copy and paste demo.py into Code and save to Desktop as demo.py
+- Open Terminal in Code
+- Install dependencies 
+    - `$ pip3 install --upgrade pip`
+    - `$ pip3 install flask` 
+- Run script
+    - `$ cd /mnt/c/Users/Pengwin/Desktop`
+    - `$ python3 demo.py`
+- Show webpage
+    - `$ wslview http://127.0.0.1:5000`
+
 ### Debug running Linux code using Visual Studio
+
+- Start sshd on WSL
+    - `$ sudo service ssh start`
+- Install .NET Core
+    - `$ pengwin-setup` -> Programming -> .NET
+- git clone ASP.NET project
+    - `$ git clone `
+- Run .NET app
+    - `$ cd `
+    - `$ dotnet restore`
+    - `$ dotnet run`
+- Verify in browser
+    - `$ wslview http://127.0.0.1:5000`
+- Attach to process from Visual Studio
+    - Debug -> 
 
 ## ops demos 
 
