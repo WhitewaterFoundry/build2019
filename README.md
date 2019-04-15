@@ -79,16 +79,13 @@ Presentation for Build 2019
     - `$ sudo service ssh start`
 - Install .NET Core
     - `$ pengwin-setup` -> Programming -> .NET
-- git clone ASP.NET project
-    - `$ git clone `
-- Run .NET app
-    - `$ cd `
-    - `$ dotnet restore`
-    - `$ dotnet run`
+- Create new ASP.NET project in Visual Studio 2019
+- Run .NET app in Windows
+- Run .NET app in Pengwin
 - Verify in browser
     - `$ wslview http://127.0.0.1:5000`
 - Attach to process from Visual Studio
-    - Debug -> 
+    - Debug -> Attach to Process
 
 ## ops demos 
 
