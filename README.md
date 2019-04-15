@@ -3,7 +3,7 @@ Presentation for Build 2019
 
 ## code
 
-- [helloworld.c]
+- [helloworld.c](https://github.com/WhitewaterFoundry/build2019/blob/master/helloworld.c)
 - [demo.py](https://github.com/WhitewaterFoundry/build2019/blob/master/demo.py) - Sample Python3 script
 - [deploy_container.yml](https://github.com/WhitewaterFoundry/build2019/blob/master/deploy_container.yml) - Sample Ansible Playbook that deploys our docker container to Azure
 - [install_fedorawsl.yml](https://github.com/WhitewaterFoundry/build2019/blob/master/install_fedorawsl.yml) - Sample Ansible Playbook that installs Fedora Remix for WSL on Windows
