@@ -91,12 +91,12 @@ Presentation for Build 2019
     - `$ wslview http://127.0.0.1:5000`
 - Attach to process from Visual Studio
     - *Debug -> Attach to Process -> SSH*
-    - `localhost1` *in Connection target*
+    - "localhost1" *in Connection target*
     - *Refresh*
-    - `pengwin` *in User name*
-    - `pengwin` *in Password* **In production we recommend using SSH keys.**
+    - "pengwin" *in User name*
+    - "pengwin" *in Password* **In production we recommend using SSH keys.**
     - *Connect*
-    - *Select* `dotnet exec /mnt/c/Users...`
+    - *Select* "dotnet exec /mnt/c/Users..."
     - *Attach*
     - *Check* "Managed (.NET Core for UNIX)" -> OK
     - *View -> Output -> Select* "Debug" **From here you can set breakpoints just as you would on Windows.**
@@ -104,6 +104,11 @@ Presentation for Build 2019
 ## ops demos 
 
 ### Containerizing our app
+
+- Compile web app
+    - `$ dotnet publish -c Release`
+- Confirm
+    - 
 
 ### Deploy container to cloud​
 
