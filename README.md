@@ -8,11 +8,23 @@ Presentation for Build 2019
 - [deploy_container.yml](https://github.com/WhitewaterFoundry/build2019/blob/master/deploy_container.yml) - Sample Ansible Playbook that deploys our docker container to Azure
 - [install_fedorawsl.yml](https://github.com/WhitewaterFoundry/build2019/blob/master/install_fedorawsl.yml) - Sample Ansible Playbook that installs Fedora Remix for WSL on Windows
 
+## demo requirements
+
+- Windows 10
+    - WSL pre-enabled
+- Visual Studio 2019
+- Visual Studio Code
+- Docker for Desktop
+- Pengwin
+    - Azure CLI pre-installed
+    - Azure 
+- X410
+
 ## dev demos 
 
 ### Getting acquainted with WSL
 
-- Enabling WSL
+- Demonstrate Enabling WSL
     - Manually
         - *Start -> Settings -> Apps & Features -> Programs and Features -> Turn Windows features on or off -> Windows Subsystem for Linux -> OK*
     - PowerShell (as Administrator)
@@ -79,11 +91,13 @@ Presentation for Build 2019
     - `$ sudo service ssh start`
 - Install .NET Core
     - `$ pengwin-setup` *-> Programming -> .NET*
-- Create new ASP.NET project in Visual Studio 2019 from template
+- Create new ASP.NET Core project in Visual Studio 2019
+- Select Web Application template
 - Run .NET app in Windows
     - *Click 'IIS Express'*
 - Run .NET app in Pengwin
-    - `$ cd /mnt/c/Users/Build2019Main/source/repos/WebApplication1/`
+    - `$ cd ~/winhome/source/repos/WebApplication1/`
+    - `$ dotnet restore`
     - `$ dotnet run`
 - Open new console
     - *Middle-click Pengwin icon in taskbar*
@@ -105,12 +119,33 @@ Presentation for Build 2019
 
 ### Containerizing our app
 
+- Install Docker bridge
+    - `$ pengwin-setup` *-> Tools -> Docker*
 - Compile web app
     - `$ dotnet publish -c Release`
 - Confirm
+    - `$ ls bin/Release/netcoreapp2.1/publish`
+- Prepare
+    - `$ cd ..`
+    - `$ nano Dockerfile`
+    - *Copy and paste the following:*
+        ```
+        FROM mcr.microsoft.com/dotnet/core/runtime:2.1
+        COPY WebApplication1/bin/Release/netcoreapp2.1/publish/ WebApplication1/
+        ENTRYPOINT ["dotnet", "WebApplication1/WebApplication1.dll"]
+        ```
+- Build Docker container
+    - `$ docker build -t myimage .`
+    - `$ docker create myimage --name webapp`
+    - `$ docker ps -A`
     - 
 
 ### Deploy container to cloud​
+
+- Install Azure CLU **Pre-installed for this demo.**
+    - `$ pengwin-setup` *-> Tools -> Cloud CLI -> Azure*
+- Create a Resource Group
+    - `$ az group create --name myResourceGroup --location eastus`
 
 ### Deploy container to on-site Linux server​
 
