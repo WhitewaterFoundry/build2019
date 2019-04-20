@@ -16,8 +16,8 @@ Presentation for Build 2019
 - Visual Studio Code
 - Docker for Desktop
 - Pengwin
-    - Azure CLI pre-installed
-    - mingw-w64 ptr-installed 
+    - Azure CLI 
+    - mingw-w64  
     - Azure credentials pre-configured
 - X410
 
@@ -175,8 +175,18 @@ Presentation for Build 2019
 - Install Azure CLU **NOTE: Pre-installed for this demo.**
     - `$ pengwin-setup` *-> Tools -> Cloud CLI -> Azure*
 - Create a Resource Group
-    - `$ az group create --name myResourceGroup --location eastus`
+    - `$ az group create --name myResourceGroup --location westus2`
+- Create an Azure container registry
+    - `$ az acr create --resource-group myResourceGroup --name myResourceGrpMVP --sku Basic`
+- Log into Azure container registry
+    - `$ az acr login --name myResourceGrpMVP`
+- Get Azure Image Registry URI
+    - `$ az acr show --name myResourceGrpMVP --query loginServer`
+- Tag our Docker image
+    - `$ docker tag WebApplication1 [URI]/WebApplication1:v1`
+- Push Docker image to Azure registry
+    - `docker push [URI]/aci-tutorial-app:v1`
 
-### Deploy container to on-site Linux server​
+### Deploy container to "on-site" Linux server​
 
 ### Configuring remote devices​
