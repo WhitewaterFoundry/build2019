@@ -17,12 +17,15 @@ Presentation for Build 2019
 - Docker for Desktop
 - Pengwin
     - Azure CLI pre-installed
-    - Azure 
+    - mingw-w64 ptr-installed 
+    - Azure credentials pre-configured
 - X410
 
 ## dev demos 
 
 ### Getting acquainted with WSL
+
+#### Lets quickly review the basics of WSL.
 
 - Demonstrate Enabling WSL
     - Manually
@@ -61,7 +64,7 @@ Presentation for Build 2019
     - `$ sudo apt-get install geany`
     - `$ geany helloworld.c`
 
-### Build our development environment
+### Build a simple development environment
 
 - Install Python
     - `$ pengwin-setup` *-> Programming -> Python*
@@ -72,7 +75,7 @@ Presentation for Build 2019
     - Paste `pengwin.exe`
 - Open Terminal in Code
 
-### Script with Code
+### Build a quick web app
 
 - Copy and paste demo.py into Code and save to Desktop as demo.py
 - Open Terminal in Code
@@ -87,12 +90,22 @@ Presentation for Build 2019
 
 ### Debug running Linux code using Visual Studio
 
+#### Let's build a more sophisticated web app, based on ASP.NET Core
+
 - Start sshd on WSL
     - `$ sudo service ssh start`
-- Install .NET Core
+- Install .NET Core in Pengwin
     - `$ pengwin-setup` *-> Programming -> .NET*
-- Create new ASP.NET Core project in Visual Studio 2019
+- Create a new project -> ASP.NET Core Web Application -> Create
+- Select
+    - ".NET Core"
+    - "ASP.NET Core 2.1"
+    - "Web Application"
+    - Create
 - Select Web Application template
+
+#### Because ASP.NET Core is cross-platform we can deploy to Windows and Linux 
+
 - Run .NET app in Windows
     - *Click 'IIS Express'*
 - Run .NET app in Pengwin
@@ -103,12 +116,15 @@ Presentation for Build 2019
     - *Middle-click Pengwin icon in taskbar*
 - Verify in browser
     - `$ wslview http://127.0.0.1:5000`
+
+#### When deploying ASP.NET Core apps to IIS, you enable IIS Management Scripts and Tools, Configure Web Deploy Publishing, Import into Visual Studio. On Linux we just use SSH.
+
 - Attach to process from Visual Studio
     - *Debug -> Attach to Process -> SSH*
     - "localhost1" *in Connection target*
     - *Refresh*
     - "pengwin" *in User name*
-    - "pengwin" *in Password* **In production we recommend using SSH keys.**
+    - "pengwin" *in Password* **NOTE: In production we recommend using SSH keys.**
     - *Connect*
     - *Select* "dotnet exec /mnt/c/Users..."
     - *Attach*
@@ -121,28 +137,42 @@ Presentation for Build 2019
 
 - Install Docker bridge
     - `$ pengwin-setup` *-> Tools -> Docker*
-- Compile web app
-    - `$ dotnet publish -c Release`
-- Confirm
-    - `$ ls bin/Release/netcoreapp2.1/publish`
-- Prepare
-    - `$ cd ..`
-    - `$ nano Dockerfile`
-    - *Copy and paste the following:*
-        ```
-        FROM mcr.microsoft.com/dotnet/core/runtime:2.1
-        COPY WebApplication1/bin/Release/netcoreapp2.1/publish/ WebApplication1/
-        ENTRYPOINT ["dotnet", "WebApplication1/WebApplication1.dll"]
-        ```
-- Build Docker container
-    - `$ docker build -t myimage .`
-    - `$ docker create myimage --name webapp`
-    - `$ docker ps -A`
-    - 
+- Get to our working folder
+    - `$ cd ~/winhome/source/repos/WebApplication1/WebApplication1/`
+- Create Dockerfile:
+    ```
+    FROM microsoft/dotnet:sdk AS build-env
+    WORKDIR /app
+
+    # Copy csproj and restore as distinct layers
+    COPY *.csproj ./
+    RUN dotnet restore
+
+    # Copy everything else and build
+    COPY . ./
+    RUN dotnet publish -c Release -o out
+
+    # Build runtime image
+    FROM microsoft/dotnet:aspnetcore-runtime
+    WORKDIR /app
+    COPY --from=build-env /app/out .
+    ENTRYPOINT ["dotnet", "WebApplication1.dll"]
+    ```
+- Create .dockerignore:
+    ```
+    bin\
+    obj\
+    ```
+- Build Docker image
+    - `$ docker build -t WebApplication1 .`
+- Test locally then stop
+    - `$ docker run -d -p 8080:80 --name localtest WebApplication1`
+    - `$ wslview http://localhost:8080/`
+    - `$ docker stop localtest`
 
 ### Deploy container to cloud​
 
-- Install Azure CLU **Pre-installed for this demo.**
+- Install Azure CLU **NOTE: Pre-installed for this demo.**
     - `$ pengwin-setup` *-> Tools -> Cloud CLI -> Azure*
 - Create a Resource Group
     - `$ az group create --name myResourceGroup --location eastus`
