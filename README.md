@@ -196,7 +196,7 @@ Presentation for Build 2019
 - Get our registry passphrase **NOTE: In production we recommend using Azure Key Vault.**
     - `$ registry_password=$(az acr credential show --name build2019dcr --query "passwords[0].value")`
 - Remove strings, do not show results
-    - `$ eval acrpass=$acrpass`
+    - `$ eval registry_password=$registry_password`
 - Deploy our container
     ```
     $ az container create --resource-group Build2019ResourceGroup --name build2019dcr --image $registry_uri/webapplication1:v1 \
@@ -225,11 +225,33 @@ Presentation for Build 2019
     - `$ ansible webserver -m ping -u root -i hosts`
 - Write Ansible Playbook
     - `$ nano deploy_container.yml`
-- Copy and paste contents of deploy_container.yml.
+- Copy and paste contents of deploy_container.yml
 - Run playbook
     - `$ ansible-playbook -i hosts deploy_container.yml --extra-vars '{"registry_uri":'$registry_uri',"registry_password":'$registry_password',"application_name":"webapplication1"}'  `
+- Verify running
+    - `$ wslview http://$registry_uri`
 
 ### Configuring remote devices​
 
 - RDP to Remote Windows
-- 
+- Enable WSL (as Administrator)
+    - `PS Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux`
+- Enable WinRM (as Administrator)
+    - `PS Winrm quickconfig`
+- Enable basic authentication
+    - `PS cmd /C 'winrm set winrm/config/service @{AllowUnencrypted="true"}' `
+    - `PS cmd /C 'winrm set winrm/config/service/auth @{Basic="true"}' `
+- Return to WSL on local device
+- Change to root directory
+    - `$ cd ~`
+- Create new directory
+    - `$ mkdir winclients`
+    - `$ cd winclients`
+- Create hosts file
+    - `$ echo "[winclient]" > hosts`
+    - `$ echo "66.42.70.150" >> hosts`
+- Write Ansible Playbook
+    - `$ nano install_fedorawsl.yml`
+- Copy and paste contents of install_fedorawsl.yml
+- Run playbook
+    - `$ ansible-playbook -i hosts install_fedorawsl.yml`

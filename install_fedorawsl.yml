@@ -1,0 +1,25 @@
+---
+- hosts: winclient
+  vars:
+    ansible_user: BuildRemote
+    ansible_password: rocknroll&7p
+    ansible_connection: winrm
+    ansible_winrm_transport: basic
+    ansible_winrm_server_cert_validation: ignore
+    ansible_winrm_scheme: http
+    ansible_port: 5985
+  gather_facts: no
+  remote_user: BuildRemote
+  tasks:
+  - name: install Chocolatey
+    win_chocolatey:
+      name: chocolatey
+      state: present
+  - name: disable enhanced exit codes
+    win_chocolatey_feature:
+      name: useEnhancedExitCodes
+      state: disabled
+  - name: Install Fedora Remix for WSL
+    win_chocolatey:
+      name: wsl-fedoraremix
+      state: present
