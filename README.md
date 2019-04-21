@@ -74,16 +74,16 @@ Presentation for Build 2019
     - Find `terminal.integrated.shell.windows`
     - Paste `pengwin.exe`
 - Open Terminal in Code
+- So we can do things like install dependencies with pip
+    - `$ pip3 install --upgrade pip`
+    - `$ pip3 install flask`
 
 ### Build a quick web app
 
 - Copy and paste demo.py into Code and save to Desktop as demo.py
-- Open Terminal in Code
-- Install dependencies 
-    - `$ pip3 install --upgrade pip`
-    - `$ pip3 install flask` 
+- Open Terminal in Code 
 - Run script
-    - `$ cd /mnt/c/Users/Pengwin/Desktop`
+    - `$ cd /mnt/c/Users/Hayden/OneDrive/Desktop`
     - `$ python3 demo.py`
 - Show webpage
     - `$ wslview http://127.0.0.1:5000`
@@ -96,6 +96,7 @@ Presentation for Build 2019
     - `$ sudo service ssh start`
 - Install .NET Core in Pengwin
     - `$ pengwin-setup` *-> Programming -> .NET*
+- Open Visual Studio 2019
 - Create a new project -> ASP.NET Core Web Application -> Create
 - Select
     - ".NET Core"
