@@ -263,3 +263,4 @@ Presentation for Build 2019
 - Copy and paste contents of install_fedorawsl.yml
 - Run playbook
     - `$ ansible-playbook -i hosts install_fedorawsl.yml`
+- Return to RDP to remote Windows 10, confirm Fedora installed and dnf updated
