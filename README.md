@@ -3,9 +3,10 @@ Presentation for Build 2019
 
 ## code
 
-- [helloworld.c](https://github.com/WhitewaterFoundry/build2019/blob/master/helloworld.c)
+- [helloworld.c](https://github.com/WhitewaterFoundry/build2019/blob/master/helloworld.c) - Sample C code
 - [demo.py](https://github.com/WhitewaterFoundry/build2019/blob/master/demo.py) - Sample Python3 script
-- [deploy_container.yml](https://github.com/WhitewaterFoundry/build2019/blob/master/deploy_container.yml) - Sample Ansible Playbook that deploys our docker container to Azure
+- [Dockerfile](https://github.com/WhitewaterFoundry/build2019/blob/master/Dockerfile) - Sample Dockerfile
+- [deploy_container.yml](https://github.com/WhitewaterFoundry/build2019/blob/master/deploy_container.yml) - Sample Ansible Playbook that deploys our docker container
 - [install_fedorawsl.yml](https://github.com/WhitewaterFoundry/build2019/blob/master/install_fedorawsl.yml) - Sample Ansible Playbook that installs Fedora Remix for WSL on Windows
 
 ## demo requirements
@@ -18,10 +19,9 @@ Presentation for Build 2019
 - Pengwin
     - Azure CLI 
     - mingw-w64  
-    - Azure credentials pre-configured
 - X410
 
-## dev demos 
+## DEV DEMOS
 
 ### Getting acquainted with WSL
 
@@ -117,7 +117,7 @@ Presentation for Build 2019
 - Verify in browser
     - `$ wslview http://127.0.0.1:5000`
 
-#### When deploying ASP.NET Core apps to IIS, you enable IIS Management Scripts and Tools, Configure Web Deploy Publishing, Import into Visual Studio. On Linux we just use SSH.
+#### When deploying ASP.NET Core apps to IIS, to remotely debug you have to enable IIS Management Scripts and Tools, Configure Web Deploy Publishing, and then Import into Visual Studio. On Linux we just use SSH.
 
 - Attach to process from Visual Studio
     - *Debug -> Attach to Process -> SSH*
@@ -131,7 +131,7 @@ Presentation for Build 2019
     - *Check* "Managed (.NET Core for UNIX)" -> OK
     - *View -> Output -> Select* "Debug" **From here you can set breakpoints just as you would on Windows.**
 
-## ops demos 
+## OPS DEMOS
 
 ### Containerizing our app
 
@@ -164,9 +164,9 @@ Presentation for Build 2019
     obj\
     ```
 - Build Docker image
-    - `$ docker build -t WebApplication1 .`
+    - `$ docker build -t webapplication1 .`
 - Test locally then stop
-    - `$ docker run -d -p 8080:80 --name localtest WebApplication1`
+    - `$ docker run -d -p 8080:80 --name localtest webapplication1`
     - `$ wslview http://localhost:8080/`
     - `$ docker stop localtest`
 
@@ -174,19 +174,62 @@ Presentation for Build 2019
 
 - Install Azure CLU **NOTE: Pre-installed for this demo.**
     - `$ pengwin-setup` *-> Tools -> Cloud CLI -> Azure*
+- Login into Azure
+    - `$ az login`
 - Create a Resource Group
-    - `$ az group create --name myResourceGroup --location westus2`
+    - `$ az group create --name Build2019ResourceGroup --location eastus`
 - Create an Azure container registry
-    - `$ az acr create --resource-group myResourceGroup --name myResourceGrpMVP --sku Basic`
+    - `$ az acr create --resource-group Build2019ResourceGroup --name build2019dcr --sku Basic`
 - Log into Azure container registry
-    - `$ az acr login --name myResourceGrpMVP`
+    - `$ az acr login --name build2019dcr`
 - Get Azure Image Registry URI
-    - `$ az acr show --name myResourceGrpMVP --query loginServer`
+    - `$ registry_uri=$(az acr show --name build2019dcr --query loginServer)`
+- Remove strings, show results
+    - `$ eval registry_uri=$registry_uri`
+    - `$ echo $registry_uri`
 - Tag our Docker image
-    - `$ docker tag WebApplication1 [URI]/WebApplication1:v1`
+    - `$ docker tag webapplication1 $registry_uri/webapplication1:v1`
 - Push Docker image to Azure registry
-    - `docker push [URI]/aci-tutorial-app:v1`
+    - `$ docker push $registry_uri/webapplication1:v1`
+- Enable administrative rights on registry
+    - `$ az acr update -n build2019dcr --admin-enabled true`
+- Get our registry passphrase **NOTE: In production we recommend using Azure Key Vault.**
+    - `$ registry_password=$(az acr credential show --name build2019dcr --query "passwords[0].value")`
+- Remove strings, do not show results
+    - `$ eval acrpass=$acrpass`
+- Deploy our container
+    ```
+    $ az container create --resource-group Build2019ResourceGroup --name build2019dcr --image $registry_uri/webapplication1:v1 \
+    --cpu 1 --memory 1 --ip-address public --ports 80 --registry-username build2019dcr --registry-password $registry_password
+    ```
+- Get IP address
+    - `$ ipaddr=$(az container list --resource-group Build2019ResourceGroup | jq '.[].ipAddress.ip')`
+- Test
+    - `$ wslview http://$ipaddr`
 
-### Deploy container to "on-site" Linux server​
+### Deploy container to on-site Linux server with Ansible
+
+- Install Ansible on Pengwin
+    - `$ pengwin-setup` *-> Tools -> Ansible* **Feature in pengwin-setup development branch.**
+    - For now: `$ curl https://raw.githubusercontent.com/WhitewaterFoundry/pengwin-setup/development/pengwin-setup.d/ansible.sh | bash`
+- Move up in our working path
+    - `$ cd ..`
+- Create hosts file
+    - `$ echo "[webserver]" > hosts`
+    - `$ echo "155.138.214.242" >> hosts`
+- Generate SSH Keys
+    - `$ ssh-keygen -t rsa -C "name@example.org"`
+- Copy SSH Keys
+    - `$ ssh-copy-id root@155.138.214.242`
+- Test connection
+    - `$ ansible webserver -m ping -u root -i hosts`
+- Write Ansible Playbook
+    - `$ nano deploy_container.yml`
+- Copy and paste contents of deploy_container.yml.
+- Run playbook
+    - `$ ansible-playbook -i hosts deploy_container.yml --extra-vars '{"registry_uri":'$registry_uri',"registry_password":'$registry_password',"application_name":"webapplication1"}'  `
 
 ### Configuring remote devices​
+
+- RDP to Remote Windows
+- 
