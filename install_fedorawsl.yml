@@ -23,3 +23,5 @@
     win_chocolatey:
       name: wsl-fedoraremix
       state: present
+  - name: Update Fedora Remix for WSL
+    win_shell: "fedoraremix.exe run 'dnf update -y'"

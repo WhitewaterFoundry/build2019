@@ -18,14 +18,14 @@ Presentation for Build 2019
 - Docker for Desktop
 - Pengwin
     - Azure CLI 
-    - mingw-w64  
+    - gcc-mingw-w64
 - X410
 
 ## DEV DEMOS
 
 ### Getting acquainted with WSL
 
-#### Lets quickly review the basics of WSL.
+#### Lets quickly review the basics of WSL and then explore some of it's capabilities. The intent of this section is to get developers thinking in this new hybrid environment.
 
 - Demonstrate Enabling WSL
     - Manually
@@ -34,12 +34,10 @@ Presentation for Build 2019
         - `PS Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux`
 - Install and run Pengwin from Microsoft Store
     - *[Store Link](https://www.microsoft.com/en-us/p/pengwin/9nv1gv1pxz6p)*
-- Install ssh
-    - `$ sudo apt-get install ssh -y`
+- Install ssh and unzip
+    - `$ sudo apt-get install ssh jq unzip -y`
 - Install basic build tools
     - `$ sudo apt-get install build-essential gcc-mingw-w64 -y`
-- Install nano
-    - `$ sudo apt-get install nano -y`
 - Run nano
     - `$ nano helloworld.c`
 - Copy and paste helloworld.c into nano and save
@@ -66,6 +64,8 @@ Presentation for Build 2019
 
 ### Build a simple development environment
 
+#### We are going to build a simple cross-compatible development environment with Python on WSL and Code on Windows. We are going to see how they can integrate to make dependency management easy.
+
 - Install Python
     - `$ pengwin-setup` *-> Programming -> Python*
 - Open Code
@@ -76,41 +76,46 @@ Presentation for Build 2019
 - Open Terminal in Code
 - So we can do things like install dependencies with pip
     - `$ pip3 install --upgrade pip`
-    - `$ pip3 install flask`
+    - `$ pip3 install flask --user`
 
 ### Build a quick web app
+
+#### We can quickly build a small web app right here in this hybrid environment.
 
 - Copy and paste demo.py into Code and save to Desktop as demo.py
 - Open Terminal in Code 
 - Run script
     - `$ cd /mnt/c/Users/Hayden/OneDrive/Desktop`
     - `$ python3 demo.py`
-- Show webpage
+- Switch to Pengwin and show webpage
     - `$ wslview http://127.0.0.1:5000`
 
 ### Debug running Linux code using Visual Studio
 
-#### Let's build a more sophisticated web app, based on ASP.NET Core
+#### Let's build a more sophisticated web app, based on ASP.NET Core.
 
 - Start sshd on WSL
     - `$ sudo service ssh start`
 - Install .NET Core in Pengwin
-    - `$ pengwin-setup` *-> Programming -> .NET*
+    - `$ pengwin-setup` *-> Programming -> .NET* **Note: NuGet is not required for this demo.**
 - Open Visual Studio 2019
 - Create a new project -> ASP.NET Core Web Application -> Create
 - Select
     - ".NET Core"
     - "ASP.NET Core 2.1"
     - "Web Application"
-    - Create
+    - "Create"
+    - **Note: Do not check HTTPS or Docker features**
 - Select Web Application template
 
-#### Because ASP.NET Core is cross-platform we can deploy to Windows and Linux 
+#### Because ASP.NET Core is cross-platform we can deploy to Windows and Linux.
 
 - Run .NET app in Windows
     - *Click 'IIS Express'*
+- Stop .NET app in Windows
+    - *Debug ->  Stop Debugging*
 - Run .NET app in Pengwin
-    - `$ cd ~/winhome/source/repos/WebApplication1/`
+    - `$ cd ~/winhome/source/repos/WebApplication1/WebApplication1/`
     - `$ dotnet restore`
     - `$ dotnet run`
 - Open new console
@@ -122,7 +127,7 @@ Presentation for Build 2019
 
 - Attach to process from Visual Studio
     - *Debug -> Attach to Process -> SSH*
-    - "localhost1" *in Connection target*
+    - "localhost" *in Connection target*
     - *Refresh*
     - "pengwin" *in User name*
     - "pengwin" *in Password* **NOTE: In production we recommend using SSH keys.**
@@ -130,7 +135,9 @@ Presentation for Build 2019
     - *Select* "dotnet exec /mnt/c/Users..."
     - *Attach*
     - *Check* "Managed (.NET Core for UNIX)" -> OK
-    - *View -> Output -> Select* "Debug" **From here you can set breakpoints just as you would on Windows.**
+    - *View -> Output -> Select* "Debug" **From here you can set breakpoints and monitor debug output just as you would on Windows.**
+- Detach from Visual Studio
+    - *Switch to Pengwin terminal and type Ctrl-C*
 
 ## OPS DEMOS
 
@@ -185,7 +192,7 @@ Presentation for Build 2019
     - `$ az acr login --name build2019dcr`
 - Get Azure Image Registry URI
     - `$ registry_uri=$(az acr show --name build2019dcr --query loginServer)`
-- Remove strings, show results
+- Remove double quotes, show results
     - `$ eval registry_uri=$registry_uri`
     - `$ echo $registry_uri`
 - Tag our Docker image
@@ -196,7 +203,7 @@ Presentation for Build 2019
     - `$ az acr update -n build2019dcr --admin-enabled true`
 - Get our registry passphrase **NOTE: In production we recommend using Azure Key Vault.**
     - `$ registry_password=$(az acr credential show --name build2019dcr --query "passwords[0].value")`
-- Remove strings, do not show results
+- Remove double quotes, do not show results
     - `$ eval registry_password=$registry_password`
 - Deploy our container
     ```
@@ -218,9 +225,8 @@ Presentation for Build 2019
 - Create hosts file
     - `$ echo "[webserver]" > hosts`
     - `$ echo "155.138.214.242" >> hosts`
-- Generate SSH Keys
+- Generate and copy SSH Keys **Note: Only necessary first time connecting.**
     - `$ ssh-keygen -t rsa -C "name@example.org"`
-- Copy SSH Keys
     - `$ ssh-copy-id root@155.138.214.242`
 - Test connection
     - `$ ansible webserver -m ping -u root -i hosts`
@@ -229,13 +235,14 @@ Presentation for Build 2019
 - Copy and paste contents of deploy_container.yml
 - Run playbook
     - `$ ansible-playbook -i hosts deploy_container.yml --extra-vars '{"registry_uri":'$registry_uri',"registry_password":'$registry_password',"application_name":"webapplication1"}'  `
+    - *NOTE: Several environmental variables defined and used earlier are carried over into our Ansible playbook using the --extra-vars option.*
 - Verify running
-    - `$ wslview http://$registry_uri`
+    - `$ wslview http://155.138.214.242`
 
 ### Configuring remote devices​
 
-- RDP to Remote Windows
-- Enable WSL (as Administrator)
+- RDP to remote Windows 10
+- Enable WSL (as Administrator) **Note: Already enabled for this demo.**
     - `PS Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux`
 - Enable WinRM (as Administrator)
     - `PS Winrm quickconfig`
