@@ -145,8 +145,8 @@ Presentation for Build 2019
 
 - Install Docker bridge
     - `$ pengwin-setup` *-> Tools -> Docker*
-- Install a third-party tool `dive`: <https://github.com/wagoodman/dive/releases>
-    - Download the latest .deb
+- Install a third-party tool `dive`
+    - Download the latest .deb from [here](https://github.com/wagoodman/dive/releases)
     - install using `sudo apt install ./dive_*.deb`
 - Get to our working folder
     - `$ cd ~/winhome/source/repos/WebApplication1/WebApplication1/`
