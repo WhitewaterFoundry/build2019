@@ -145,6 +145,9 @@ Presentation for Build 2019
 
 - Install Docker bridge
     - `$ pengwin-setup` *-> Tools -> Docker*
+- Install a third-party tool `dive`: <https://github.com/wagoodman/dive/releases>
+    - Download the latest .deb
+    - install using `sudo apt install ./dive_*.deb`
 - Get to our working folder
     - `$ cd ~/winhome/source/repos/WebApplication1/WebApplication1/`
 - Create Dockerfile:
@@ -171,8 +174,8 @@ Presentation for Build 2019
     bin\
     obj\
     ```
-- Build Docker image
-    - `$ docker build -t webapplication1 .`
+- Build Docker image and analyze it
+    - `$ dive build -t webapplication1 .`
 - Test locally then stop
     - `$ docker run -d -p 8080:80 --name localtest webapplication1`
     - `$ wslview http://localhost:8080/`
