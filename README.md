@@ -18,6 +18,8 @@ Presentation for Build 2019
 - Docker for Desktop
 - Pengwin
     - Azure CLI 
+    - Ansible
+    - build-essential
     - gcc-mingw-w64
 - X410
 
@@ -35,7 +37,7 @@ Presentation for Build 2019
 - Install and run Pengwin from Microsoft Store
     - *[Store Link](https://www.microsoft.com/en-us/p/pengwin/9nv1gv1pxz6p)*
 - Install ssh and unzip
-    - `$ sudo apt-get install ssh jq unzip -y`
+    - `$ sudo apt-get install ssh unzip -y`
 - Install basic build tools
     - `$ sudo apt-get install build-essential gcc-mingw-w64 -y`
 - Run nano
