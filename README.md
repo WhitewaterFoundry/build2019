@@ -17,10 +17,15 @@ Presentation for Build 2019
 - Visual Studio Code
 - Docker for Desktop
 - Pengwin
-    - Azure CLI 
-    - Ansible
-    - build-essential
-    - gcc-mingw-w64
+    - Azure CLI via pengwin-setup
+    - Ansible via pengwin-setup
+    - Python and pip via pengwin-setup
+    - .NET via pengwin-setup
+    - Docker Bridge via pengwin-setup
+    - build-essential gcc-mingw-w64 via apt-get install
+    - common.sh modified to skip update/upgrade (until [#450](https://github.com/WhitewaterFoundry/Pengwin/issues/450) is implemented)
+        - `$ sudo nano /usr/local/pengwin-setup.d/common.sh`
+        - Comment out lines 40 and 42.
 - X410
 
 ## DEV DEMOS
@@ -30,19 +35,30 @@ Presentation for Build 2019
 #### Lets quickly review the basics of WSL and then explore some of it's capabilities. The intent of this section is to get developers thinking in this new hybrid environment.
 
 - Demonstrate Enabling WSL
+    - *Enable WSL*
     - Manually
         - *Start -> Settings -> Apps & Features -> Programs and Features -> Turn Windows features on or off -> Windows Subsystem for Linux -> OK*
+        *or*
+        - WIN + "Turn Windows Features On and Off"
     - PowerShell (as Administrator)
         - `PS Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux`
-- Install and run Pengwin from Microsoft Store
+    - Reboot
+- Install Pengwin from Microsoft Store
+    - *Where to install Pengwin and other Linux distirbutions*
     - *[Store Link](https://www.microsoft.com/en-us/p/pengwin/9nv1gv1pxz6p)*
+- Launch Pengwin from Start Menu
+    - *How to start Pengwin*
 - Install ssh and unzip
+    - *We're going to add some packages using the apt package manager*
     - `$ sudo apt-get install ssh unzip -y`
-- Install basic build tools
-    - `$ sudo apt-get install build-essential gcc-mingw-w64 -y`
-- Run nano
+- Git clone our working folder
+    - *We're going to our Windows Desktop folder*
+    - `$ cd ~/winhome/OneDrive/Desktop/`
+    - *Git clone our Build 2019 project*
+    - `$ git clone https://github.com/WhitewaterFoundry/build2019`
+    - `$ cd build2019`
+- Open nano to show some simple C code
     - `$ nano helloworld.c`
-- Copy and paste helloworld.c into nano and save
 - Build helloworld.c for Linux
     - `$ gcc helloworld.c -o helloworld`
 - Run helloworld for Linux
@@ -50,15 +66,15 @@ Presentation for Build 2019
 - Build helloworld.c for Windows
     - `$ x86_64-w64-mingw32-gcc helloworld.c -o helloworld.exe`
 - Run helloworld for Windows
-    - `$ cp helloworld.exe /mnt/c/Users/Pengwin/Desktop/`
     - `$ cmd.exe`
-    - `> cd c:\Users\Pengwin\Desktop\`
     - `> helloworld.exe`
     - `> exit`
 - Install PowerShell
+    - *Pengwin also includes easy access to  open source projects from Microsoft, including PowerShell for Linux, .NET Core, and more.*
+    - *To give an example of how to install packages from pengwin-setup:*
     - `$ pengwin-setup` -> Tools -> PowerShell
     - `$ pwsh`
-- Install and run X410
+- While PowerShell installs, install and run X410
     - *[Store Link](https://www.microsoft.com/en-us/p/x410/9nlp712zmn9q)*
 - Install Geany
     - `$ sudo apt-get install geany`
@@ -77,24 +93,21 @@ Presentation for Build 2019
     - Paste `pengwin.exe`
 - Open Terminal in Code
 - So we can do things like install dependencies with pip
-    - `$ pip3 install --upgrade pip`
-    - `$ pip3 install flask --user`
+    - `$ sudo pip3 install flask`
 
 ### Build a quick web app
 
 #### We can quickly build a small web app right here in this hybrid environment.
 
-- Copy and paste demo.py into Code and save to Desktop as demo.py
 - Open Terminal in Code 
 - Run script
-    - `$ cd /mnt/c/Users/Hayden/OneDrive/Desktop`
     - `$ python3 demo.py`
-- Switch to Pengwin and show webpage
+- Open another Terminal in Code
     - `$ wslview http://127.0.0.1:5000`
 
 ### Debug running Linux code using Visual Studio
 
-#### Let's build a more sophisticated web app, based on ASP.NET Core.
+#### Let's build a more robust web app, based on ASP.NET Core, something you might build in-house or get contracted to develop for enterprise.
 
 - Start sshd on WSL
     - `$ sudo service ssh start`
@@ -107,17 +120,19 @@ Presentation for Build 2019
     - "ASP.NET Core 2.1"
     - "Web Application"
     - "Create"
-    - **Note: Do not check HTTPS or Docker features**
+    - **Note: Do not enable HTTPS or Docker features**
 - Select Web Application template
 
 #### Because ASP.NET Core is cross-platform we can deploy to Windows and Linux.
 
 - Run .NET app in Windows
     - *Click 'IIS Express'*
+- While building, open Pengwin and:
+    - `$ cd ~/winhome/source/repos/WebApplication1/`
+- Show app in Edge
 - Stop .NET app in Windows
     - *Debug ->  Stop Debugging*
 - Run .NET app in Pengwin
-    - `$ cd ~/winhome/source/repos/WebApplication1/WebApplication1/`
     - `$ dotnet restore`
     - `$ dotnet run`
 - Open new console
@@ -127,7 +142,10 @@ Presentation for Build 2019
 
 #### When deploying ASP.NET Core apps to IIS, to remotely debug you have to enable IIS Management Scripts and Tools, Configure Web Deploy Publishing, and then Import into Visual Studio. On Linux we just use SSH.
 
-- Attach to process from Visual Studio
+- Attach to local process from Visual Studio
+    - *Debug -> Attach to Process -> Default*
+    - *Select* "dotnet.exe Automatic: Managed (CoreCLR) code"
+- Attach to remote process from Visual Studio
     - *Debug -> Attach to Process -> SSH*
     - "localhost" *in Connection target*
     - *Refresh*
@@ -141,15 +159,20 @@ Presentation for Build 2019
 - Detach from Visual Studio
     - *Switch to Pengwin terminal and type Ctrl-C*
 
+    *Note: On .NET Core apps on bare metal (and on WSL in future) you can use native debugging with GDB.
+
 ## OPS DEMOS
 
 ### Containerizing our app
 
 - Install Docker bridge
-    - `$ pengwin-setup` *-> Tools -> Docker*
+    - *Demonstrate* `$ pengwin-setup` *-> Tools -> Docker*
 - Install a third-party tool `dive`
     - Download the latest .deb from [here](https://github.com/wagoodman/dive/releases)
-    - install using `sudo apt install ./dive_*.deb`
+        - `$ cd ~`
+        - `$ wget https://github.com/wagoodman/dive/releases/download/v0.7.2/dive_0.7.2_linux_amd64.deb`
+    - Install using
+        - `$ sudo apt install ./dive_*.deb`
 - Get to our working folder
     - `$ cd ~/winhome/source/repos/WebApplication1/WebApplication1/`
 - Create Dockerfile:
