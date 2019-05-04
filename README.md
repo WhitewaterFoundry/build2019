@@ -20,12 +20,14 @@ Presentation for Build 2019
     - Azure CLI via pengwin-setup
     - Ansible via pengwin-setup
     - Python and pip via pengwin-setup
-    - .NET via pengwin-setup
+    - .NET Core via pengwin-setup
     - Docker Bridge via pengwin-setup
-    - build-essential gcc-mingw-w64 via apt-get install
-    - common.sh modified to skip update/upgrade (until [#450](https://github.com/WhitewaterFoundry/Pengwin/issues/450) is implemented)
-        - `$ sudo nano /usr/local/pengwin-setup.d/common.sh`
-        - Comment out lines 40 and 42.
+    - GUI libraries via pengwin-setup
+    - sudo apt-get update -y
+    - sudo apt-get install build-essential gcc-mingw-w64 geany -y
+    - pengwin-setup modified to skip update/upgrade:
+        - `$ sudo nano /usr/local/bin/pengwin-setup` and comment out line 133
+        - `$ sudo nano /usr/local/pengwin-setup.d/common.sh` and comment out lines 40 and 42
 - X410
 
 ## DEV DEMOS
@@ -46,54 +48,59 @@ Presentation for Build 2019
 - Install Pengwin from Microsoft Store
     - *Where to install Pengwin and other Linux distirbutions*
     - *[Store Link](https://www.microsoft.com/en-us/p/pengwin/9nv1gv1pxz6p)*
-- Launch Pengwin from Start Menu
+- Launch Pengwin
     - *How to start Pengwin*
-- Install ssh and unzip
+- Install unzip
     - *We're going to add some packages using the apt package manager*
-    - `$ sudo apt-get install ssh unzip -y`
+    - `$ sudo apt-get install unzip -y`
 - Git clone our working folder
     - *We're going to our Windows Desktop folder*
     - `$ cd ~/winhome/OneDrive/Desktop/`
-    - *Git clone our Build 2019 project*
+    - *Git clone our Build 2019 sample project*
     - `$ git clone https://github.com/WhitewaterFoundry/build2019`
     - `$ cd build2019`
-- Open nano to show some simple C code
+- Open nano to show some simple C code we've written
     - `$ nano helloworld.c`
 - Build helloworld.c for Linux
     - `$ gcc helloworld.c -o helloworld`
 - Run helloworld for Linux
     - `$ ./helloworld`
-- Build helloworld.c for Windows
+- Build helloworld.c for Windows using MinGW packages
     - `$ x86_64-w64-mingw32-gcc helloworld.c -o helloworld.exe`
-- Run helloworld for Windows
+- Test helloworld for Windows
     - `$ cmd.exe`
     - `> helloworld.exe`
     - `> exit`
-- Install PowerShell
-    - *Pengwin also includes easy access to  open source projects from Microsoft, including PowerShell for Linux, .NET Core, and more.*
-    - *To give an example of how to install packages from pengwin-setup:*
-    - `$ pengwin-setup` -> Tools -> PowerShell
-    - `$ pwsh`
-- While PowerShell installs, install and run X410
-    - *[Store Link](https://www.microsoft.com/en-us/p/x410/9nlp712zmn9q)*
-- Install Geany
+- Install Geany, a GUI code editor
     - `$ sudo apt-get install geany`
+- Show how to install and run X410 *[Store Link](https://www.microsoft.com/en-us/p/x410/9nlp712zmn9q)*.
+- Open file in Geany
     - `$ geany helloworld.c`
 
 ### Build a simple development environment
 
 #### We are going to build a simple cross-compatible development environment with Python on WSL and Code on Windows. We are going to see how they can integrate to make dependency management easy.
 
-- Install Python
+##### Here is the old way:
+
+- Demonstrate installing Python
     - `$ pengwin-setup` *-> Programming -> Python*
 - Open Code
-- Configure Code
+- Configure Code to connect to WSL:
     - *Ctrl + ,*
     - Find `terminal.integrated.shell.windows`
     - Paste `pengwin.exe`
 - Open Terminal in Code
 - So we can do things like install dependencies with pip
     - `$ sudo pip3 install flask`
+
+##### Here is the new way:
+
+- Search for and show Remote WSL extension in Code
+- Demonstrate usage of new extension
+    - *F1 -> Remote WSL> -> New Window*
+    - Show 'Open Folder'
+    - Show 'New Terminal'
 
 ### Build a quick web app
 
