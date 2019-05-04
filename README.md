@@ -20,7 +20,7 @@ Presentation for Build 2019
     - Azure CLI via pengwin-setup
     - Ansible via pengwin-setup
     - Python and pip via pengwin-setup
-    - .NET Core and NuGet via pengwin-setup
+    - .NET Core via pengwin-setup
     - Docker Bridge via pengwin-setup
     - GUI libraries via pengwin-setup
     - sudo apt-get update -y
@@ -96,13 +96,11 @@ Presentation for Build 2019
 
 ##### Here is the new way:
 
-- Open Extensions (Ctrl->Shift->X)
 - Search for and show Remote WSL extension in Code
 - Demonstrate usage of new extension
     - *F1 -> Remote WSL> -> New Window*
     - Show 'Open Folder'
     - Show 'New Terminal'
-- *Will integrate Python extension with WSL, including pylint*
 
 ### Build a quick web app
 
@@ -124,7 +122,6 @@ Presentation for Build 2019
     - `$ pengwin-setup` *-> Programming -> .NET* **Note: NuGet is not required for this demo.**
 - Open Visual Studio 2019
 - Create a new project -> ASP.NET Core Web Application -> Create
-- Save to `C:\Users\Hayden\OneDrive\Desktop\build2019\`
 - Select
     - ".NET Core"
     - "ASP.NET Core 2.1"
@@ -137,8 +134,8 @@ Presentation for Build 2019
 
 - Run .NET app in Windows
     - *Click 'IIS Express'*
-- While Visual Studio is building, open Pengwin and:
-    - `$ cd ~/winhome/OneDrive/Desktop/build2019/WebApplication1`
+- While building, open Pengwin and:
+    - `$ cd ~/winhome/source/repos/WebApplication1/`
 - Show app in Edge
 - Stop .NET app in Windows
     - *Debug ->  Stop Debugging*
@@ -152,6 +149,9 @@ Presentation for Build 2019
 
 #### When deploying ASP.NET Core apps to IIS, to remotely debug you have to enable IIS Management Scripts and Tools, Configure Web Deploy Publishing, and then Import into Visual Studio. On Linux we just use SSH.
 
+- Attach to local process from Visual Studio
+    - *Debug -> Attach to Process -> Default*
+    - *Select* "dotnet.exe Automatic: Managed (CoreCLR) code"
 - Attach to remote process from Visual Studio
     - *Debug -> Attach to Process -> SSH*
     - "localhost" *in Connection target*
@@ -172,7 +172,7 @@ Presentation for Build 2019
 
 ### Containerizing our app
 
-- Install Docker bridge
+- Install how to install Docker bridge
     - *Demonstrate* `$ pengwin-setup` *-> Tools -> Docker*
 - Install a third-party tool `dive`
     - Download the latest .deb from [here](https://github.com/wagoodman/dive/releases)
@@ -181,37 +181,23 @@ Presentation for Build 2019
     - Install using
         - `$ sudo apt install ./dive_*.deb`
 - Get to our working folder
-    - `$ cd ~/winhome/OneDrive/Desktop/build2019/WebApplication1`
-- Create Dockerfile:
-```
-FROM microsoft/dotnet:sdk AS build-env
-WORKDIR /app
-
-# Copy csproj and restore as distinct layers
-COPY *.csproj ./
-RUN dotnet restore
-
-# Copy everything else and build
-COPY . ./
-RUN dotnet publish -c Release -o out
-
-# Build runtime image
-FROM microsoft/dotnet:aspnetcore-runtime
-WORKDIR /app
-COPY --from=build-env /app/out .
-ENTRYPOINT ["dotnet", "WebApplication1.dll"]
-```
+    - `$ cd ~/winhome/source/repos/WebApplication1/`
+- Create Dockerfile
+    - `$ nano Dockerfile`
+- Copy and paste from Dockerfile, explaining the Dockerfile.
+    - Use official ASP.NET Core Docker container
+    - Just 10 lines of actual code
 - Create .dockerignore:
-    ```
+```
 bin\
 obj\
-    ```
+```
 - Build Docker image and analyze it
     - `$ dive build -t webapplication1 .`
 - Test locally then stop
-    - `$ docker run -d -p 8080:80 --name localtest webapplication1`
+    - `$ docker run -d -p 8080:80 --name localtest2 webapplication1`
     - `$ wslview http://localhost:8080/`
-    - `$ docker stop localtest`
+    - `$ docker stop localtest2`
 
 ### Deploy container to cloud​
 
@@ -237,15 +223,15 @@ obj\
 - Enable administrative rights on registry
     - `$ az acr update -n build2019dcr --admin-enabled true`
 - Get our registry passphrase **NOTE: In production we recommend using Azure Key Vault.**
-    - `$ registry_password=$(az acr credential show --name build2019dcr --query "passwords[0].value")`
+    - `$ registry_password=$(az acr credential show --name build2019dcr --query "passwords[0].value")   `
 - Remove double quotes, do not show results
-    - `$ eval registry_password=$registry_password`
+    - `$ eval registry_password=$registry_password  `
 - Deploy our container
     ```
     $ az container create --resource-group Build2019ResourceGroup --name build2019dcr --image $registry_uri/webapplication1:v1 \
     --cpu 1 --memory 1 --ip-address public --ports 80 --registry-username build2019dcr --registry-password $registry_password
     ```
-- Get IP address
+- Get our container's IP address by listing contents and piping through json parser jq, like sed for json, we pre-install with the Azure CLI tools
     - `$ ipaddr=$(az container list --resource-group Build2019ResourceGroup | jq '.[].ipAddress.ip')`
 - Test
     - `$ wslview http://$ipaddr`
@@ -253,7 +239,7 @@ obj\
 ### Deploy container to on-site Linux server with Ansible
 
 - Install Ansible on Pengwin
-    - `$ pengwin-setup` *-> Tools -> Ansible* **Feature in pengwin-setup development branch.**
+    - `$ pengwin-setup` *-> Tools -> Ansible* **Feature in pengwin-setup SOON.**
     - For now: `$ curl https://raw.githubusercontent.com/WhitewaterFoundry/pengwin-setup/development/pengwin-setup.d/ansible.sh | bash`
 - Move up in our working path
     - `$ cd ..`
@@ -267,7 +253,11 @@ obj\
     - `$ ansible webserver -m ping -u root -i hosts`
 - Write Ansible Playbook
     - `$ nano deploy_container.yml`
-- Copy and paste contents of deploy_container.yml
+- Copy and paste contents of deploy_container.yml, explaining each step:
+    - Installs Docker dependencies, if needed
+    - Installs Docker from official sources, if neded
+    - Installs Ansible client dependencies
+    - Configures to pull image from Azure container registry, uses environmental variables already created
 - Run playbook
     - `$ ansible-playbook -i hosts deploy_container.yml --extra-vars '{"registry_uri":'$registry_uri',"registry_password":'$registry_password',"application_name":"webapplication1"}'  `
     - *NOTE: Several environmental variables defined and used earlier are carried over into our Ansible playbook using the --extra-vars option.*
@@ -276,14 +266,16 @@ obj\
 
 ### Configuring remote devices​
 
+#### We aren't simply limited to administering Linux devices.
+
 - RDP to remote Windows 10
 - Enable WSL (as Administrator) **Note: Already enabled for this demo.**
-    - `PS Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux`
+    - `Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux`
 - Enable WinRM (as Administrator)
-    - `PS Winrm quickconfig`
+    - `Winrm quickconfig`
 - Enable basic authentication
-    - `PS cmd /C 'winrm set winrm/config/service @{AllowUnencrypted="true"}' `
-    - `PS cmd /C 'winrm set winrm/config/service/auth @{Basic="true"}' `
+    - `cmd /C 'winrm set winrm/config/service @{AllowUnencrypted="true"}' `
+    - `cmd /C 'winrm set winrm/config/service/auth @{Basic="true"}' `
 - Return to WSL on local device
 - Change to root directory
     - `$ cd ~`
@@ -292,10 +284,12 @@ obj\
     - `$ cd winclients`
 - Create hosts file
     - `$ echo "[winclient]" > hosts`
-    - `$ echo "66.42.70.150" >> hosts`
+    - `$ echo "149.248.34.228" >> hosts`
+    - `$ echo "[winclient:vars]" >> hosts`
+    - `$ echo "ansible_port=5985" >> hosts`
 - Write Ansible Playbook
     - `$ nano install_fedorawsl.yml`
-- Copy and paste contents of install_fedorawsl.yml
+- Copy and paste contents of install_fedorawsl.yml, explaining contents, insert password
 - Run playbook
     - `$ ansible-playbook -i hosts install_fedorawsl.yml`
 - Return to RDP to remote Windows 10, confirm Fedora installed and dnf updated

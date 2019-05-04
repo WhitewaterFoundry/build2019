@@ -5,9 +5,6 @@
     ansible_password: 
     ansible_connection: winrm
     ansible_winrm_transport: basic
-    ansible_winrm_server_cert_validation: ignore
-    ansible_winrm_scheme: http
-    ansible_port: 5985
   gather_facts: no
   remote_user: BuildRemote
   tasks:
@@ -19,6 +16,10 @@
     win_chocolatey_feature:
       name: useEnhancedExitCodes
       state: disabled
+  - name: Install WSL
+    win_chocolatey:
+      name: wsl
+      state: present
   - name: Install Fedora Remix for WSL
     win_chocolatey:
       name: wsl-fedoraremix
