@@ -20,7 +20,7 @@ Presentation for Build 2019
     - Azure CLI via pengwin-setup
     - Ansible via pengwin-setup
     - Python and pip via pengwin-setup
-    - .NET Core via pengwin-setup
+    - .NET Core and NuGet via pengwin-setup
     - Docker Bridge via pengwin-setup
     - GUI libraries via pengwin-setup
     - sudo apt-get update -y
@@ -96,11 +96,13 @@ Presentation for Build 2019
 
 ##### Here is the new way:
 
+- Open Extensions (Ctrl->Shift->X)
 - Search for and show Remote WSL extension in Code
 - Demonstrate usage of new extension
     - *F1 -> Remote WSL> -> New Window*
     - Show 'Open Folder'
     - Show 'New Terminal'
+- *Will integrate Python extension with WSL, including pylint*
 
 ### Build a quick web app
 
@@ -122,6 +124,7 @@ Presentation for Build 2019
     - `$ pengwin-setup` *-> Programming -> .NET* **Note: NuGet is not required for this demo.**
 - Open Visual Studio 2019
 - Create a new project -> ASP.NET Core Web Application -> Create
+- Save to `C:\Users\Hayden\OneDrive\Desktop\build2019\`
 - Select
     - ".NET Core"
     - "ASP.NET Core 2.1"
@@ -134,8 +137,8 @@ Presentation for Build 2019
 
 - Run .NET app in Windows
     - *Click 'IIS Express'*
-- While building, open Pengwin and:
-    - `$ cd ~/winhome/source/repos/WebApplication1/`
+- While Visual Studio is building, open Pengwin and:
+    - `$ cd ~/winhome/OneDrive/Desktop/build2019/WebApplication1`
 - Show app in Edge
 - Stop .NET app in Windows
     - *Debug ->  Stop Debugging*
@@ -149,9 +152,6 @@ Presentation for Build 2019
 
 #### When deploying ASP.NET Core apps to IIS, to remotely debug you have to enable IIS Management Scripts and Tools, Configure Web Deploy Publishing, and then Import into Visual Studio. On Linux we just use SSH.
 
-- Attach to local process from Visual Studio
-    - *Debug -> Attach to Process -> Default*
-    - *Select* "dotnet.exe Automatic: Managed (CoreCLR) code"
 - Attach to remote process from Visual Studio
     - *Debug -> Attach to Process -> SSH*
     - "localhost" *in Connection target*
@@ -181,30 +181,30 @@ Presentation for Build 2019
     - Install using
         - `$ sudo apt install ./dive_*.deb`
 - Get to our working folder
-    - `$ cd ~/winhome/source/repos/WebApplication1/WebApplication1/`
+    - `$ cd ~/winhome/OneDrive/Desktop/build2019/WebApplication1`
 - Create Dockerfile:
-    ```
-    FROM microsoft/dotnet:sdk AS build-env
-    WORKDIR /app
+```
+FROM microsoft/dotnet:sdk AS build-env
+WORKDIR /app
 
-    # Copy csproj and restore as distinct layers
-    COPY *.csproj ./
-    RUN dotnet restore
+# Copy csproj and restore as distinct layers
+COPY *.csproj ./
+RUN dotnet restore
 
-    # Copy everything else and build
-    COPY . ./
-    RUN dotnet publish -c Release -o out
+# Copy everything else and build
+COPY . ./
+RUN dotnet publish -c Release -o out
 
-    # Build runtime image
-    FROM microsoft/dotnet:aspnetcore-runtime
-    WORKDIR /app
-    COPY --from=build-env /app/out .
-    ENTRYPOINT ["dotnet", "WebApplication1.dll"]
-    ```
+# Build runtime image
+FROM microsoft/dotnet:aspnetcore-runtime
+WORKDIR /app
+COPY --from=build-env /app/out .
+ENTRYPOINT ["dotnet", "WebApplication1.dll"]
+```
 - Create .dockerignore:
     ```
-    bin\
-    obj\
+bin\
+obj\
     ```
 - Build Docker image and analyze it
     - `$ dive build -t webapplication1 .`
