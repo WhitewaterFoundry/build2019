@@ -26,7 +26,7 @@ Presentation for Build 2019
     - sudo apt-get update -y
     - sudo apt-get install build-essential gcc-mingw-w64 geany -y
     - pengwin-setup modified to skip update/upgrade:
-        - `$ sudo nano /usr/local/bin/pengwin-setup` and comment out line 133
+        - `$ sudo nano /usr/local/bin/pengwin-setup` and comment out line 139
         - `$ sudo nano /usr/local/pengwin-setup.d/common.sh` and comment out lines 40 and 42
 - X410
 
